@@ -1,24 +1,24 @@
 #define DEBUG // Comment this out to disable all debug prints
 
-const unsigned long operationDelay = 3000; //
+const unsigned long operationDelay = 3000; // delay before after and between each queue operation
 const unsigned long operationDuration = 300000;
-const unsigned long longPressDuration = 5000;
+const unsigned long longPressDuration = 5000; // how long a button needs to be pressed for cancelation
 
 // Pin Definitions
-const int buttonMaster = 2; // Button Master
-const int buttonA = 3;      // Button B
-const int buttonB = 4;      // Button C
-const int buttonC = 5;      // Button C
+const int buttonMaster = 2;
+const int buttonA = 3;
+const int buttonB = 4;
+const int buttonC = 5;
 
-const int controlMaster = 6; // Control LED Master
-const int controlA1 = 7;     // Control LED A1
-const int controlB1 = 8;     // Control LED B1
-const int controlC1 = 9;     // Control LED C1
+const int controlMaster = 6;
+const int controlA1 = 7;
+const int controlB1 = 8;
+const int controlC1 = 9;
 
-const int operationMaster = 10; // Operation LED Master
-const int operationAp = 11;     // Operation LED Ap
-const int operationBp = 12;     // Operation LED Bp
-const int operationCp = 13;     // Operation LED Cp
+const int operationMaster = 10;
+const int operationAp = 11;
+const int operationBp = 12;
+const int operationCp = 13;
 
 // Timing Variables
 const unsigned long debounceDelay = 50; // Debounce delay in ms
