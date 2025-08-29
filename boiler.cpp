@@ -1,4 +1,4 @@
-//#define DEBUG // Comment this out to disable all debug prints
+// #define DEBUG // Comment this out to disable all debug prints
 #define BAUDRATE 9600;
 
 const unsigned long operationDelay = 3000; // delay before after and between each queue operation
@@ -50,7 +50,6 @@ int masterIndex = 0;
 
 void setup()
 {
-    Serial.begin(BAUDRATE);
     // Initialize pins
     pinMode(buttonMaster, INPUT_PULLUP);
     pinMode(buttonA, INPUT_PULLUP);
@@ -64,6 +63,9 @@ void setup()
         digitalWrite(controlLeds[i], LOW);
         digitalWrite(operationLeds[i], LOW);
     }
+
+    delay(500);
+    Serial.begin(BAUDRATE);
 }
 
 void loop()
@@ -76,9 +78,9 @@ void loop()
     checkButton(buttonB, 2, currentMillis);      // Button B is index 2
     checkButton(buttonC, 3, currentMillis);      // Button C is index 3
 
-    #ifdef DEBUG
-        printQueue();
-    #endif
+#ifdef DEBUG
+    printQueue();
+#endif
 
     // Manage the queue
     manageQueue(currentMillis);
