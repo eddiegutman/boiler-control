@@ -51,6 +51,10 @@ int buttonAIndex = 1;
 int buttonBIndex = 2;
 int buttonCIndex = 3;
 
+// Serial buffer variables
+char cmd[32];
+int cmdIndex;
+
 void setup()
 {
     // Initialize pins
@@ -87,6 +91,9 @@ void loop()
 
     // Manage the queue
     manageQueue(currentMillis);
+
+    // Read from the serial
+    readFromSerial();
 }
 
 // Check button state and enqueue if necessary
@@ -320,4 +327,29 @@ void removeFromQueue(int buttonIndex)
             return;
         }
     }
+}
+
+// read commands from the serial
+void readFromSerial()
+{
+    if (Serial.available())
+    {
+        char c = (char)Serial.read();
+        if (c == '\r' || c == '\n')
+        {
+            cmd[cmdIndex] = '\0';
+            cmdIndex = 0;
+            execute(cmd);
+        }
+        else
+        {
+            cmd[cmdIndex++] = c;
+        }
+    }
+}
+
+// execute the correct command received from serial
+void execute(char *cmd)
+{
+  
 }
