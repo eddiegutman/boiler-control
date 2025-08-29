@@ -145,6 +145,11 @@ void manageQueue(unsigned long currentMillis)
             delayStartTime = 0;
             processStartTime = currentMillis;
             digitalWrite(operationLeds[currentButton], HIGH); // Turn on operation LED
+
+            // Send LED state updates over serial
+            Serial.print("led ");
+            Serial.print(operationLeds[currentButton]);
+            Serial.print(" on\n");
         }
 
         // Check if the current process is complete
@@ -153,6 +158,11 @@ void manageQueue(unsigned long currentMillis)
             // Turn off operation and control LEDs
             digitalWrite(operationLeds[currentButton], LOW);
             digitalWrite(controlLeds[currentButton], LOW);
+
+            // Send LED state updates over serial
+            Serial.print("led ");
+            Serial.print(operationLeds[currentButton]);
+            Serial.print(" off\n");
 
             // Reset button state
             buttonState[currentButton] = false;
