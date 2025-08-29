@@ -47,6 +47,9 @@ int operationLeds[4] = {operationMaster, operationAp, operationBp, operationCp};
 
 // Indexing
 int masterIndex = 0;
+int buttonAIndex = 1;
+int buttonBIndex = 2;
+int buttonCIndex = 3;
 
 void setup()
 {
@@ -73,10 +76,10 @@ void loop()
     unsigned long currentMillis = millis();
 
     // Check buttons
-    checkButton(buttonMaster, 0, currentMillis); // Button Master is index 0
-    checkButton(buttonA, 1, currentMillis);      // Button A is index 1
-    checkButton(buttonB, 2, currentMillis);      // Button B is index 2
-    checkButton(buttonC, 3, currentMillis);      // Button C is index 3
+    checkButton(buttonMaster, masterIndex, currentMillis);
+    checkButton(buttonA, buttonAIndex, currentMillis);
+    checkButton(buttonB, buttonBIndex, currentMillis);
+    checkButton(buttonC, buttonCIndex, currentMillis);
 
 #ifdef DEBUG
     printQueue();
