@@ -1,4 +1,4 @@
-#define DEBUG // Comment this out to disable all debug prints
+//#define DEBUG // Comment this out to disable all debug prints
 
 const unsigned long operationDelay = 3000; // delay before after and between each queue operation
 const unsigned long operationDuration = 300000;
@@ -6,14 +6,14 @@ const unsigned long longPressDuration = 5000; // how long a button needs to be p
 
 // Pin Definitions
 const int buttonMaster = 2;
-const int buttonA = 3;
-const int buttonB = 4;
-const int buttonC = 5;
+const int buttonA = 8;
+const int buttonB = 6;
+const int buttonC = 4;
 
-const int controlMaster = 6;
-const int controlA1 = 7;
-const int controlB1 = 8;
-const int controlC1 = 9;
+const int controlMaster = 3;
+const int controlA1 = 9;
+const int controlB1 = 7;
+const int controlC1 = 5;
 
 const int operationMaster = 10;
 const int operationAp = 11;
