@@ -244,6 +244,11 @@ void enqueue(int buttonIndex)
             digitalWrite(operationLeds[currentButton], LOW);
             buttonState[currentButton] = false;
 
+            // Send LED state updates over serial
+            Serial.print("led ");
+            Serial.print(operationLeds[currentButton]);
+            Serial.print(" off\n");
+
             // reset queue
             queueProcessing = false;
             delayStartTime = 0;
