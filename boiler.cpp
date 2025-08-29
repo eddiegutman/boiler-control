@@ -348,8 +348,24 @@ void readFromSerial()
     }
 }
 
+// check and send the LED states over serial
+void initSerialLEDS()
+{
+    for (int i = 0; i < 4; i++)
+    {
+        // Send LED state updates over serial
+        Serial.print("led ");
+        Serial.print(operationLeds[i]);
+        Serial.print(digitalRead(operationLeds[i]) == LOW ? " off\n" : " on\n");
+    }
+}
+
 // execute the correct command received from serial
 void execute(char *cmd)
 {
-  
+    if (strcmp(cmd, "init") == 0)
+    {
+        initSerialLEDS();
+        return;
+    }
 }
