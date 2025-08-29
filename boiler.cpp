@@ -2,7 +2,7 @@
 
 const unsigned long operationDelay = 3000; // delay before after and between each queue operation
 const unsigned long operationDuration = 300000;
-const unsigned long longPressDuration = 5000; // how long a button needs to be pressed for cancelation
+const unsigned long longPressDuration = 3000; // how long a button needs to be pressed for cancelation
 
 // Pin Definitions
 const int buttonMaster = 2;
