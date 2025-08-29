@@ -360,12 +360,26 @@ void initSerialLEDS()
     }
 }
 
+void triggerMasterButtonPressFromSerial()
+{
+    lastPress[masterIndex] = millis();
+    buttonState[masterIndex] = true;
+    enqueue(masterIndex);
+    digitalWrite(controlLeds[masterIndex], HIGH);
+}
+
 // execute the correct command received from serial
 void execute(char *cmd)
 {
     if (strcmp(cmd, "init") == 0)
     {
         initSerialLEDS();
+        return;
+    }
+
+    if (strcmp(cmd, "master on") == 0)
+    {
+        triggerMasterButtonPressFromSerial();
         return;
     }
 }
