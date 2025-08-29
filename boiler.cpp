@@ -1,4 +1,5 @@
 //#define DEBUG // Comment this out to disable all debug prints
+#define BAUDRATE 9600;
 
 const unsigned long operationDelay = 3000; // delay before after and between each queue operation
 const unsigned long operationDuration = 300000;
@@ -49,7 +50,7 @@ int masterIndex = 0;
 
 void setup()
 {
-    Serial.begin(9600);
+    Serial.begin(BAUDRATE);
     // Initialize pins
     pinMode(buttonMaster, INPUT_PULLUP);
     pinMode(buttonA, INPUT_PULLUP);
