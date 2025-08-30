@@ -1,9 +1,12 @@
 // #define DEBUG // Comment this out to disable all debug prints
 #define BAUDRATE 9600;
+#define MIN_DURATION 20
+#define MAX_DURATION 60
 
-const unsigned long operationDelay = 3000; // delay before after and between each queue operation
-const unsigned long operationDuration = 300000;
-const unsigned long longPressDuration = 3000; // how long a button needs to be pressed for cancelation
+int time = 30;                                      // duration in minutes
+unsigned long operationDuration = time * 60 * 1000; // duration in ms
+const unsigned long operationDelay = 3000;          // delay before after and between each queue operation
+const unsigned long longPressDuration = 3000;       // how long a button needs to be pressed for cancelation
 
 // Pin Definitions
 const int buttonMaster = 2;
@@ -360,6 +363,14 @@ void initSerialLEDS()
     }
 }
 
+// check and send the time state over serial
+void initSerialTime()
+{
+    Serial.print("time ");
+    Serial.print(time);
+    Serial.print("\n");
+}
+
 void triggerMasterButtonPressFromSerial()
 {
     lastPress[masterIndex] = millis();
@@ -368,18 +379,37 @@ void triggerMasterButtonPressFromSerial()
     digitalWrite(controlLeds[masterIndex], HIGH);
 }
 
+void setOperationDuration(int value)
+{
+    if (value < MIN_DURATION || value > MAX_DURATION)
+    {
+        return;
+    }
+
+    time = value;                          // value in in minutes
+    operationDuration = value * 60 * 1000; // convert to ms
+}
+
 // execute the correct command received from serial
 void execute(char *cmd)
 {
     if (strcmp(cmd, "init") == 0)
     {
         initSerialLEDS();
+        initSerialTime();
         return;
     }
 
     if (strcmp(cmd, "master on") == 0)
     {
         triggerMasterButtonPressFromSerial();
+        return;
+    }
+
+    if (strncmp(cmd, "time ", 5) == 0)
+    {
+        int value = atoi(cmd + 5);
+        setOperationDuration(value);
         return;
     }
 }
