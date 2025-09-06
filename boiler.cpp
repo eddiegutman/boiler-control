@@ -361,7 +361,7 @@ void setSerialLedState(int ledNum, const char *state)
     Serial.print(ledNum);
     Serial.print(" ");
     Serial.print(state);
-    Serial.print("\n");
+    Serial.println("\n");
 }
 
 // check and send the LED states over serial
@@ -380,7 +380,7 @@ void initSerialTimerControl()
     Serial.print(CMD_TIMER_CONTROL);
     Serial.print(" ");
     Serial.print(timer);
-    Serial.print("\n");
+    Serial.println("\n");
 }
 
 void triggerMasterButtonPressFromSerial()
