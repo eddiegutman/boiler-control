@@ -3,6 +3,15 @@
 #define MIN_DURATION 20
 #define MAX_DURATION 60
 
+// Serial commands
+const char CMD_INIT[] = "init";
+const char CMD_BUTTON_MASTER[] = "master";
+const char CMD_TIMER_CONTROL[] = "timer";
+const char CMD_LED_CONTROL[] = "led";
+const char CMD_ON[] = "on";
+const char CMD_OFF[] = "off";
+
+// Timing configuration
 int time = 30;                                      // duration in minutes
 unsigned long operationDuration = time * 60 * 1000; // duration in ms
 const unsigned long operationDelay = 3000;          // delay before after and between each queue operation
@@ -160,9 +169,7 @@ void manageQueue(unsigned long currentMillis)
             digitalWrite(operationLeds[currentButton], HIGH); // Turn on operation LED
 
             // Send LED state updates over serial
-            Serial.print("led ");
-            Serial.print(operationLeds[currentButton]);
-            Serial.print(" on\n");
+            setSerialLedState(operationLeds[currentButton], CMD_ON);
         }
 
         // Check if the current process is complete
@@ -173,9 +180,7 @@ void manageQueue(unsigned long currentMillis)
             digitalWrite(controlLeds[currentButton], LOW);
 
             // Send LED state updates over serial
-            Serial.print("led ");
-            Serial.print(operationLeds[currentButton]);
-            Serial.print(" off\n");
+            setSerialLedState(operationLeds[currentButton], CMD_OFF);
 
             // Reset button state
             buttonState[currentButton] = false;
@@ -255,9 +260,7 @@ void enqueue(int buttonIndex)
             buttonState[currentButton] = false;
 
             // Send LED state updates over serial
-            Serial.print("led ");
-            Serial.print(operationLeds[currentButton]);
-            Serial.print(" off\n");
+            setSerialLedState(operationLeds[currentButton], CMD_OFF);
 
             // reset queue
             queueProcessing = false;
@@ -351,22 +354,31 @@ void readFromSerial()
     }
 }
 
+void setSerialLedState(int ledNum, const char *state)
+{
+    Serial.print(CMD_LED_CONTROL);
+    Serial.print(" ");
+    Serial.print(ledNum);
+    Serial.print(" ");
+    Serial.print(state);
+    Serial.print("\n");
+}
+
 // check and send the LED states over serial
 void initSerialLEDS()
 {
     for (int i = 0; i < 4; i++)
     {
         // Send LED state updates over serial
-        Serial.print("led ");
-        Serial.print(operationLeds[i]);
-        Serial.print(digitalRead(operationLeds[i]) == LOW ? " off\n" : " on\n");
+        setSerialLedState(operationLeds[i], digitalRead(operationLeds[i]) == LOW ? CMD_OFF : CMD_ON);
     }
 }
 
 // check and send the time state over serial
 void initSerialTime()
 {
-    Serial.print("time ");
+    Serial.print(CMD_TIMER_CONTROL);
+    Serial.print(" ");
     Serial.print(time);
     Serial.print("\n");
 }
@@ -393,22 +405,27 @@ void setOperationDuration(int value)
 // execute the correct command received from serial
 void execute(char *cmd)
 {
-    if (strcmp(cmd, "init") == 0)
+    char *keyword = strtok(cmd, " "); // first word before space
+    char *arg = strtok(NULL, " ");    // second word (if any)
+
+    if (strcmp(keyword, CMD_INIT) == 0)
     {
         initSerialLEDS();
         initSerialTime();
         return;
     }
 
-    if (strcmp(cmd, "master on") == 0)
+    if (strcmp(keyword, CMD_BUTTON_MASTER) == 0)
     {
-        triggerMasterButtonPressFromSerial();
+        if (arg != NULL && strcmp(arg, CMD_ON) == 0) {
+            triggerMasterButtonPressFromSerial();
+        }
         return;
     }
 
-    if (strncmp(cmd, "time ", 5) == 0)
+    if (strcmp(keyword, CMD_TIMER_CONTROL) == 0 && arg != NULL)
     {
-        int value = atoi(cmd + 5);
+        int value = atoi(arg);
         setOperationDuration(value);
         return;
     }
