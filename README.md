@@ -41,6 +41,15 @@ This project is designed for a shared living space where multiple residents use 
 
 > Only one operation LED (and thus one boiler power channel) is active at any given time, ensuring exclusive use and proper electricity tracking.
 
+## Remote control
+
+Includes remote control with Serial, which can be used with [RoboRemo](https://roboremo.app/) for example via Bluetooth (RFCOMM).
+
+Key features:
+- View the current operating LED.
+- Turn on/off the master switch.
+- Control the operation duration.
+
 ## Use Case
 
 Perfect for apartments or shared spaces where:
