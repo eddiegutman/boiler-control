@@ -213,6 +213,7 @@ void cancelProcess(int buttonIndex)
         delayStartTime = 0;
         processStartTime = 0;
         digitalWrite(operationLeds[buttonIndex], LOW);
+        setSerialLedState(operationLeds[buttonIndex], CMD_OFF);
         dequeue(); // Remove from queue
     }
     else
