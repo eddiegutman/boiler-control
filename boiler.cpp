@@ -12,8 +12,8 @@ const char CMD_ON[] = "on";
 const char CMD_OFF[] = "off";
 
 // Timing configuration
-int time = 30;                                      // duration in minutes
-unsigned long operationDuration = time * 60 * 1000; // duration in ms
+int timer = 30;                                      // duration in minutes
+unsigned long operationDuration = timer * 60 * 1000; // duration in ms
 const unsigned long operationDelay = 3000;          // delay before after and between each queue operation
 const unsigned long longPressDuration = 3000;       // how long a button needs to be pressed for cancellation
 
@@ -375,11 +375,11 @@ void initSerialLEDS()
 }
 
 // check and send the time state over serial
-void initSerialTime()
+void initSerialTimerControl()
 {
     Serial.print(CMD_TIMER_CONTROL);
     Serial.print(" ");
-    Serial.print(time);
+    Serial.print(timer);
     Serial.print("\n");
 }
 
@@ -398,7 +398,7 @@ void setOperationDuration(int value)
         return;
     }
 
-    time = value;                          // value in in minutes
+    timer = value;                          // value in in minutes
     operationDuration = value * 60 * 1000; // convert to ms
 }
 
@@ -411,7 +411,7 @@ void execute(char *cmd)
     if (strcmp(keyword, CMD_INIT) == 0)
     {
         initSerialLEDS();
-        initSerialTime();
+        initSerialTimerControl();
         return;
     }
 
