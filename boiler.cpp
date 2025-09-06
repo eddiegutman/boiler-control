@@ -1,12 +1,12 @@
 // #define DEBUG // Comment this out to disable all debug prints
-#define BAUDRATE 9600;
+#define BAUDRATE 9600
 #define MIN_DURATION 20
 #define MAX_DURATION 60
 
 int time = 30;                                      // duration in minutes
 unsigned long operationDuration = time * 60 * 1000; // duration in ms
 const unsigned long operationDelay = 3000;          // delay before after and between each queue operation
-const unsigned long longPressDuration = 3000;       // how long a button needs to be pressed for cancelation
+const unsigned long longPressDuration = 3000;       // how long a button needs to be pressed for cancellation
 
 // Pin Definitions
 const int buttonMaster = 2;
