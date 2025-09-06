@@ -14,8 +14,8 @@ const char CMD_OFF[] = "off";
 // Timing configuration
 int timer = 30;                                      // duration in minutes
 unsigned long operationDuration = timer * 60 * 1000; // duration in ms
-const unsigned long operationDelay = 3000;          // delay before after and between each queue operation
-const unsigned long longPressDuration = 3000;       // how long a button needs to be pressed for cancellation
+const unsigned long operationDelay = 3000;           // delay before after and between each queue operation
+const unsigned long longPressDuration = 3000;        // how long a button needs to be pressed for cancellation
 
 // Pin Definitions
 const int buttonMaster = 2;
@@ -384,12 +384,17 @@ void initSerialTimerControl()
     Serial.println("\n");
 }
 
-void triggerMasterButtonPressFromSerial()
+void triggerMasterButtonOnFromSerial()
 {
     lastPress[masterIndex] = millis();
     buttonState[masterIndex] = true;
     enqueue(masterIndex);
     digitalWrite(controlLeds[masterIndex], HIGH);
+}
+
+void triggerMasterButtonOffFromSerial()
+{
+    cancelProcess(masterIndex);
 }
 
 void setOperationDuration(int value)
@@ -399,7 +404,7 @@ void setOperationDuration(int value)
         return;
     }
 
-    timer = value;                          // value in in minutes
+    timer = value;                         // value in in minutes
     operationDuration = value * 60 * 1000; // convert to ms
 }
 
@@ -418,8 +423,13 @@ void execute(char *cmd)
 
     if (strcmp(keyword, CMD_BUTTON_MASTER) == 0)
     {
-        if (arg != NULL && strcmp(arg, CMD_ON) == 0) {
-            triggerMasterButtonPressFromSerial();
+        if (arg != NULL && strcmp(arg, CMD_ON) == 0)
+        {
+            triggerMasterButtonOnFromSerial();
+        }
+        else if (arg != NULL && strcmp(arg, CMD_OFF) == 0)
+        {
+            triggerMasterButtonOffFromSerial();
         }
         return;
     }
