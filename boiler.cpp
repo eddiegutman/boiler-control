@@ -89,8 +89,7 @@ void setup()
         digitalWrite(operationLeds[i], LOW);
     }
 
-    pinMode(thermostatPin, OUTPUT);
-    digitalWrite(thermostatPin, LOW);
+    pinMode(thermostatPin, INPUT);
 
     delay(500);
     Serial.begin(BAUDRATE);
