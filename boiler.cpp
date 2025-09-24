@@ -13,12 +13,14 @@ const char CMD_ON[] = "on";
 const char CMD_OFF[] = "off";
 
 // Timing configuration
-int timer = 30;                                      // duration in minutes
+int timer = 30;                                                     // duration in minutes
 unsigned long operationDuration = timer * SECONDS_IN_MINUTE * 1000; // duration in ms
-const int operationDelay = 3000;           // delay before after and between each queue operation
-const int longPressDuration = 3000;        // how long a button needs to be pressed for cancellation
+const int operationDelay = 3000;                                    // delay before after and between each queue operation
+const int longPressDuration = 3000;                                 // how long a button needs to be pressed for cancellation
 
 // Pin Definitions
+const int thermostatPin = 1;
+
 const int buttonMaster = 2;
 const int buttonA = 8;
 const int buttonB = 6;
@@ -68,6 +70,9 @@ int buttonCIndex = 3;
 char cmd[32];
 int cmdIndex;
 
+// Thermostat variables
+bool thermostatStatusOn = false;
+
 void setup()
 {
     // Initialize pins
@@ -83,6 +88,9 @@ void setup()
         digitalWrite(controlLeds[i], LOW);
         digitalWrite(operationLeds[i], LOW);
     }
+
+    pinMode(thermostatPin, OUTPUT);
+    digitalWrite(thermostatPin, LOW);
 
     delay(500);
     Serial.begin(BAUDRATE);
@@ -107,6 +115,8 @@ void loop()
 
     // Read from the serial
     readFromSerial();
+
+    updateThermostatLed();
 }
 
 // Check button state and enqueue if necessary
@@ -218,7 +228,7 @@ void cancelProcess(int buttonIndex)
     {
         removeFromQueue(buttonIndex);
     }
-    
+
     digitalWrite(controlLeds[buttonIndex], LOW);
     setSerialLedState(controlLeds[buttonIndex], CMD_OFF);
     buttonState[buttonIndex] = false; // Reset button state
@@ -401,7 +411,7 @@ void setOperationDuration(int value)
         return;
     }
 
-    timer = value;                         // value in in minutes
+    timer = value;                                        // value in in minutes
     operationDuration = value * SECONDS_IN_MINUTE * 1000; // convert to ms
 }
 
@@ -436,5 +446,21 @@ void execute(char *cmd)
         int value = atoi(arg);
         setOperationDuration(value);
         return;
+    }
+}
+
+void updateThermostatLed()
+{
+    int currentState = digitalRead(thermostatPin);
+
+    if (currentState == HIGH && !thermostatStatusOn)
+    {
+        setSerialLedState(thermostatPin, CMD_ON);
+        thermostatStatusOn = true;
+    }
+    else if (currentState == LOW && thermostatStatusOn)
+    {
+        setSerialLedState(thermostatPin, CMD_OFF);
+        thermostatStatusOn = false;
     }
 }
