@@ -141,6 +141,7 @@ void checkButton(int buttonPin, int buttonIndex, unsigned long currentMillis)
                 buttonState[buttonIndex] = true;
                 enqueue(buttonIndex);                         // Add button to the queue
                 digitalWrite(controlLeds[buttonIndex], HIGH); // Turn on control LED
+                setSerialLedState(controlLeds[buttonIndex], CMD_ON);
             }
             // Reset states after release
             buttonPressed[buttonIndex] = false;
@@ -167,9 +168,6 @@ void manageQueue(unsigned long currentMillis)
             delayStartTime = 0;
             processStartTime = currentMillis;
             digitalWrite(operationLeds[currentButton], HIGH); // Turn on operation LED
-
-            // Send LED state updates over serial
-            setSerialLedState(operationLeds[currentButton], CMD_ON);
         }
 
         // Check if the current process is complete
@@ -180,7 +178,7 @@ void manageQueue(unsigned long currentMillis)
             digitalWrite(controlLeds[currentButton], LOW);
 
             // Send LED state updates over serial
-            setSerialLedState(operationLeds[currentButton], CMD_OFF);
+            setSerialLedState(controlLeds[currentButton], CMD_OFF);
 
             // Reset button state
             buttonState[currentButton] = false;
@@ -213,15 +211,15 @@ void cancelProcess(int buttonIndex)
         delayStartTime = 0;
         processStartTime = 0;
         digitalWrite(operationLeds[buttonIndex], LOW);
-        setSerialLedState(operationLeds[buttonIndex], CMD_OFF);
         dequeue(); // Remove from queue
     }
     else
     {
         removeFromQueue(buttonIndex);
     }
-
+    
     digitalWrite(controlLeds[buttonIndex], LOW);
+    setSerialLedState(controlLeds[buttonIndex], CMD_OFF);
     buttonState[buttonIndex] = false; // Reset button state
 }
 
@@ -259,9 +257,6 @@ void enqueue(int buttonIndex)
             // Stop the current operation immediately
             digitalWrite(operationLeds[currentButton], LOW);
             buttonState[currentButton] = false;
-
-            // Send LED state updates over serial
-            setSerialLedState(operationLeds[currentButton], CMD_OFF);
 
             // reset queue
             queueProcessing = false;
@@ -371,7 +366,7 @@ void initSerialLEDS()
     for (int i = 0; i < 4; i++)
     {
         // Send LED state updates over serial
-        setSerialLedState(operationLeds[i], digitalRead(operationLeds[i]) == LOW ? CMD_OFF : CMD_ON);
+        setSerialLedState(controlLeds[i], digitalRead(controlLeds[i]) == LOW ? CMD_OFF : CMD_ON);
     }
 }
 
@@ -390,6 +385,7 @@ void triggerMasterButtonOnFromSerial()
     buttonState[masterIndex] = true;
     enqueue(masterIndex);
     digitalWrite(controlLeds[masterIndex], HIGH);
+    setSerialLedState(controlLeds[masterIndex], CMD_ON);
 }
 
 void triggerMasterButtonOffFromSerial()
