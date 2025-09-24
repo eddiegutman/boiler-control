@@ -2,6 +2,7 @@
 #define BAUDRATE 9600
 #define MIN_DURATION 20
 #define MAX_DURATION 60
+#define SECONDS_IN_MINUTE 60
 
 // Serial commands
 const char CMD_INIT[] = "init";
@@ -13,7 +14,7 @@ const char CMD_OFF[] = "off";
 
 // Timing configuration
 int timer = 30;                                      // duration in minutes
-unsigned long operationDuration = timer * 60 * 1000; // duration in ms
+unsigned long operationDuration = timer * SECONDS_IN_MINUTE * 1000; // duration in ms
 const int operationDelay = 3000;           // delay before after and between each queue operation
 const int longPressDuration = 3000;        // how long a button needs to be pressed for cancellation
 
@@ -401,7 +402,7 @@ void setOperationDuration(int value)
     }
 
     timer = value;                         // value in in minutes
-    operationDuration = value * 60 * 1000; // convert to ms
+    operationDuration = value * SECONDS_IN_MINUTE * 1000; // convert to ms
 }
 
 // execute the correct command received from serial
