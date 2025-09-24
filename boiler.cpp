@@ -14,8 +14,8 @@ const char CMD_OFF[] = "off";
 // Timing configuration
 int timer = 30;                                      // duration in minutes
 unsigned long operationDuration = timer * 60 * 1000; // duration in ms
-const unsigned long operationDelay = 3000;           // delay before after and between each queue operation
-const unsigned long longPressDuration = 3000;        // how long a button needs to be pressed for cancellation
+const int operationDelay = 3000;           // delay before after and between each queue operation
+const int longPressDuration = 3000;        // how long a button needs to be pressed for cancellation
 
 // Pin Definitions
 const int buttonMaster = 2;
@@ -34,7 +34,7 @@ const int operationBp = 12;
 const int operationCp = 13;
 
 // Timing Variables
-const unsigned long debounceDelay = 50; // Debounce delay in ms
+const int debounceDelay = 50; // Debounce delay in ms
 
 // Queue Variables
 int queue[4] = {-1, -1, -1, -1}; // Holds button numbers in the queue
