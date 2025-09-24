@@ -1,3 +1,5 @@
+#include <EEPROM.h>
+
 // #define DEBUG // Comment this out to disable all debug prints
 #define BAUDRATE 9600
 #define MIN_DURATION 20
@@ -13,14 +15,16 @@ const char CMD_ON[] = "on";
 const char CMD_OFF[] = "off";
 
 // Timing configuration
-int timer = 30;                                                     // duration in minutes
-unsigned long operationDuration = timer * SECONDS_IN_MINUTE * 1000; // duration in ms
-const int operationDelay = 3000;                                    // delay before after and between each queue operation
-const int longPressDuration = 3000;                                 // how long a button needs to be pressed for cancellation
+int timer;
+const int timerAddress = 0;
+
+unsigned long operationDuration;
+const int operationDelay = 3000;    // delay before after and between each queue operation
+const int longPressDuration = 3000; // how long a button needs to be pressed for cancellation
 
 // Pin Definitions
 const int defensePin = 0;
-const int thermostatPin = 1;
+const int thermostatPin = 14;
 
 const int buttonMaster = 2;
 const int buttonA = 8;
@@ -92,6 +96,8 @@ void setup()
 
     pinMode(thermostatPin, INPUT);
     pinMode(defensePin, INPUT);
+
+    loadTimerFromMemory();
 
     delay(500);
     Serial.begin(BAUDRATE);
@@ -174,8 +180,7 @@ void manageQueue(unsigned long currentMillis)
         {
             return; // Still waiting for the delay to finish
         }
-        if (delayStartTime > 0 && currentMillis - delayStartTime >= operationDelay 
-            && digitalRead(defensePin) == LOW)
+        if (delayStartTime > 0 && currentMillis - delayStartTime >= operationDelay && digitalRead(defensePin) == LOW)
         {
             // Delay is complete, start the operation
             delayStartTime = 0;
@@ -413,7 +418,8 @@ void setOperationDuration(int value)
         return;
     }
 
-    timer = value;                                        // value in in minutes
+    timer = value; // value in minutes
+    EEPROM.put(timerAddress, timer);
     operationDuration = value * SECONDS_IN_MINUTE * 1000; // convert to ms
 }
 
@@ -465,4 +471,17 @@ void updateThermostatLed()
         setSerialLedState(thermostatPin, CMD_OFF);
         thermostatStatusOn = false;
     }
+}
+
+void loadTimerFromMemory()
+{
+    EEPROM.get(timerAddress, timer);
+
+    if (timer < MIN_DURATION || timer > MAX_DURATION)
+    {
+        timer = 30;
+        EEPROM.put(timerAddress, timer);
+    }
+
+    operationDuration = timer * SECONDS_IN_MINUTE * 1000;
 }
