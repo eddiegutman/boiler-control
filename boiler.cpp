@@ -19,6 +19,7 @@ const int operationDelay = 3000;                                    // delay bef
 const int longPressDuration = 3000;                                 // how long a button needs to be pressed for cancellation
 
 // Pin Definitions
+const int defensePin = 0;
 const int thermostatPin = 1;
 
 const int buttonMaster = 2;
@@ -90,6 +91,7 @@ void setup()
     }
 
     pinMode(thermostatPin, INPUT);
+    pinMode(defensePin, INPUT);
 
     delay(500);
     Serial.begin(BAUDRATE);
@@ -172,7 +174,8 @@ void manageQueue(unsigned long currentMillis)
         {
             return; // Still waiting for the delay to finish
         }
-        else if (delayStartTime > 0 && currentMillis - delayStartTime >= operationDelay)
+        if (delayStartTime > 0 && currentMillis - delayStartTime >= operationDelay 
+            && digitalRead(defensePin) == LOW)
         {
             // Delay is complete, start the operation
             delayStartTime = 0;
