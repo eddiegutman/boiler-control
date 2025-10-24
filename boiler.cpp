@@ -428,7 +428,7 @@ void setOperationDuration(int value)
 
     timer = value; // value in minutes
     EEPROM.put(timerAddress, timer);
-    operationDuration = value * SECONDS_IN_MINUTE * 1000; // convert to ms
+    operationDuration = (unsigned long)value * SECONDS_IN_MINUTE * 1000; // convert to ms
 }
 
 // execute the correct command received from serial
@@ -491,7 +491,7 @@ void loadTimerFromMemory()
         EEPROM.put(timerAddress, timer);
     }
 
-    operationDuration = timer * SECONDS_IN_MINUTE * 1000;
+    operationDuration = (unsigned long)timer * SECONDS_IN_MINUTE * 1000;
 }
 
 void serialLedBlinkWaiting(unsigned long currentMillis)
