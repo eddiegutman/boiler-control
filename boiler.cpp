@@ -78,6 +78,11 @@ int cmdIndex;
 // Thermostat variables
 bool thermostatStatusOn = false;
 
+// Blinking variable
+int blinkInterval = 1000;
+unsigned long blinkPreviousMillis = 0;
+int blinkState = LOW;
+
 void setup()
 {
     // Initialize pins
@@ -124,6 +129,7 @@ void loop()
     readFromSerial();
 
     updateThermostatLed();
+    serialLedBlinkWaiting(currentMillis);
 }
 
 // Check button state and enqueue if necessary
@@ -213,6 +219,8 @@ void manageQueue(unsigned long currentMillis)
     {
         queueProcessing = true;
         currentButton = queue[0];
+
+        setSerialLedState(controlLeds[currentButton], CMD_ON);
 
         // Start the 30-second delay before operation begins
         delayStartTime = currentMillis;
@@ -484,4 +492,18 @@ void loadTimerFromMemory()
     }
 
     operationDuration = timer * SECONDS_IN_MINUTE * 1000;
+}
+
+void serialLedBlinkWaiting(unsigned long currentMillis)
+{
+    if (queueSize > 1 && currentMillis - blinkPreviousMillis >= blinkInterval)
+    {
+        const char *state = blinkState ? CMD_ON : CMD_OFF;
+        for (int i = 1; i < queueSize; i++)
+        {
+            setSerialLedState(controlLeds[queue[i]], state);
+        }
+        blinkState = !blinkState;
+        blinkPreviousMillis = currentMillis;
+    }
 }
