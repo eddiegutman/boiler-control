@@ -396,6 +396,19 @@ void initSerialLEDS()
     }
 }
 
+// check and send the thermostat LED state over serial
+void initThermostatLed()
+{
+    int currentState = digitalRead(thermostatPin);
+    if (currentState == HIGH) {
+        setSerialLedState(thermostatPin, CMD_ON);
+        thermostatStatusOn = true;
+    } else {
+        setSerialLedState(thermostatPin, CMD_OFF);
+        thermostatStatusOn = false;
+    }
+}
+
 // check and send the time state over serial
 void initSerialTimerControl()
 {
@@ -440,6 +453,7 @@ void execute(char *cmd)
     if (strcmp(keyword, CMD_INIT) == 0)
     {
         initSerialLEDS();
+        initThermostatLed();
         initSerialTimerControl();
         return;
     }
