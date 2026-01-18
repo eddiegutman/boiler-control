@@ -193,7 +193,7 @@ void manageQueue(unsigned long currentMillis)
         {
             return; // Still waiting for the delay to finish
         }
-        if (delayStartTime > 0 && currentMillis - delayStartTime >= operationDelay && digitalRead(defensePin) == LOW)
+        if (delayStartTime > 0 && currentMillis - delayStartTime >= operationDelay && digitalRead(defensePin) == HIGH)
         {
             // Delay is complete, start the operation
             delayStartTime = 0;
