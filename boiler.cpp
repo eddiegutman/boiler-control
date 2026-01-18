@@ -10,6 +10,7 @@
 const char CMD_INIT[] = "init";
 const char CMD_BUTTON_MASTER[] = "master";
 const char CMD_TIMER_CONTROL[] = "timer";
+const char CMD_TIME_INDICATOR[] = "clock";
 const char CMD_LED_CONTROL[] = "led";
 const char CMD_ON[] = "on";
 const char CMD_OFF[] = "off";
@@ -19,7 +20,7 @@ int timer;
 const int timerAddress = 0;
 
 unsigned long operationDuration;
-const int operationDelay = 500;    // delay before after and between each queue operation
+const int operationDelay = 500;     // delay before after and between each queue operation
 const int longPressDuration = 2000; // how long a button needs to be pressed for cancellation
 
 // Pin Definitions
@@ -83,6 +84,11 @@ int blinkInterval = 1000;
 unsigned long blinkPreviousMillis = 0;
 int blinkState = LOW;
 
+// Operation timing
+int timeIndicatorInterval = (unsigned long)SECONDS_IN_MINUTE * 1000; // 1 min
+unsigned long timeIndicatorPreviousMillis = 0;
+int timeIndicator = 0;
+
 void setup()
 {
     // Initialize pins
@@ -130,6 +136,7 @@ void loop()
 
     updateThermostatLed();
     serialLedBlinkWaiting(currentMillis);
+    updateTimeIndicator(currentMillis);
 }
 
 // Check button state and enqueue if necessary
@@ -221,6 +228,9 @@ void manageQueue(unsigned long currentMillis)
         currentButton = queue[0];
 
         setSerialLedState(controlLeds[currentButton], CMD_ON);
+
+        timeIndicator = 0;
+        setSerialTimeIndicator(0);
 
         // Start the 30-second delay before operation begins
         delayStartTime = currentMillis;
@@ -386,6 +396,22 @@ void setSerialLedState(int ledNum, const char *state)
     Serial.println("\n");
 }
 
+void setSerialTimeIndicator(int time)
+{
+    Serial.print(CMD_TIME_INDICATOR);
+    Serial.print(" ");
+    Serial.print(time);
+    Serial.println("\n");
+}
+
+void initSerialTimeIndicator()
+{
+    Serial.print(CMD_TIME_INDICATOR);
+    Serial.print(" ");
+    Serial.print(timeIndicator);
+    Serial.println("\n");
+}
+
 // check and send the LED states over serial
 void initSerialLEDS()
 {
@@ -400,10 +426,13 @@ void initSerialLEDS()
 void initThermostatLed()
 {
     int currentState = digitalRead(thermostatPin);
-    if (currentState == HIGH) {
+    if (currentState == HIGH)
+    {
         setSerialLedState(thermostatPin, CMD_ON);
         thermostatStatusOn = true;
-    } else {
+    }
+    else
+    {
         setSerialLedState(thermostatPin, CMD_OFF);
         thermostatStatusOn = false;
     }
@@ -454,6 +483,7 @@ void execute(char *cmd)
     {
         initSerialLEDS();
         initThermostatLed();
+        initSerialTimeIndicator();
         initSerialTimerControl();
         return;
     }
@@ -519,5 +549,15 @@ void serialLedBlinkWaiting(unsigned long currentMillis)
         }
         blinkState = !blinkState;
         blinkPreviousMillis = currentMillis;
+    }
+}
+
+void updateTimeIndicator(unsigned long currentMillis)
+{
+    if (queueProcessing && currentMillis - timeIndicatorPreviousMillis >= timeIndicatorInterval)
+    {
+        timeIndicator++;
+        setSerialTimeIndicator(timeIndicator);
+        timeIndicatorPreviousMillis = currentMillis;
     }
 }
