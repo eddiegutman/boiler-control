@@ -19,12 +19,12 @@ int timer;
 const int timerAddress = 0;
 
 unsigned long operationDuration;
-const int operationDelay = 3000;    // delay before after and between each queue operation
-const int longPressDuration = 3000; // how long a button needs to be pressed for cancellation
+const int operationDelay = 500;    // delay before after and between each queue operation
+const int longPressDuration = 2000; // how long a button needs to be pressed for cancellation
 
 // Pin Definitions
-const int defensePin = 0;
-const int thermostatPin = 14;
+const int defensePin = 13;
+const int thermostatPin = A0;
 
 const int buttonMaster = 2;
 const int buttonA = 8;
@@ -39,7 +39,7 @@ const int controlC1 = 5;
 const int operationMaster = 10;
 const int operationAp = 11;
 const int operationBp = 12;
-const int operationCp = 13;
+const int operationCp = A2;
 
 // Timing Variables
 const int debounceDelay = 50; // Debounce delay in ms
