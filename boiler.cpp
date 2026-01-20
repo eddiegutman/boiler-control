@@ -396,19 +396,20 @@ void setSerialLedState(int ledNum, const char *state)
     Serial.println("\n");
 }
 
-void setSerialTimeIndicator(int time)
+void setSerialTimeIndicator(int percent)
 {
     Serial.print(CMD_TIME_INDICATOR);
     Serial.print(" ");
-    Serial.print(time);
+    Serial.print(percent);
     Serial.println("\n");
 }
 
 void initSerialTimeIndicator()
 {
+    int percent = (double)timeIndicator / (double)timer * 100;
     Serial.print(CMD_TIME_INDICATOR);
     Serial.print(" ");
-    Serial.print(timeIndicator);
+    Serial.print(percent);
     Serial.println("\n");
 }
 
@@ -558,7 +559,8 @@ void updateTimeIndicator(unsigned long currentMillis)
     if (queueProcessing && thermostatState == HIGH && currentMillis - timeIndicatorPreviousMillis >= timeIndicatorInterval)
     {
         timeIndicator++;
-        setSerialTimeIndicator(timeIndicator);
+        int percent = (double)timeIndicator / (double)timer * 100;
+        setSerialTimeIndicator(percent);
         timeIndicatorPreviousMillis = currentMillis;
     }
 }
