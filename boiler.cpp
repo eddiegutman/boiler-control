@@ -554,7 +554,8 @@ void serialLedBlinkWaiting(unsigned long currentMillis)
 
 void updateTimeIndicator(unsigned long currentMillis)
 {
-    if (queueProcessing && currentMillis - timeIndicatorPreviousMillis >= timeIndicatorInterval)
+    int thermostatState = digitalRead(thermostatPin);
+    if (queueProcessing && thermostatState == HIGH && currentMillis - timeIndicatorPreviousMillis >= timeIndicatorInterval)
     {
         timeIndicator++;
         setSerialTimeIndicator(timeIndicator);
