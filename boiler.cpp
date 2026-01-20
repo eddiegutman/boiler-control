@@ -85,7 +85,7 @@ unsigned long blinkPreviousMillis = 0;
 int blinkState = LOW;
 
 // Operation timing
-int timeIndicatorInterval = (unsigned long)SECONDS_IN_MINUTE * 1000; // 1 min
+unsigned long timeIndicatorInterval = (unsigned long)SECONDS_IN_MINUTE * 1000; // 1 min
 unsigned long timeIndicatorPreviousMillis = 0;
 int timeIndicator = 0;
 
